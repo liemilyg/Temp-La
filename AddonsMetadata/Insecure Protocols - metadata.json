@@ -1,0 +1,10 @@
+{
+  "addonKey": "InsecureProtocolsDashboard",
+  "logoFileName": "",
+  "description": "",
+  "dataTypesDependencies": ["SecurityEvent", "Event"],
+  "datasourceCardKeysDependencies": ["SecurityEvent"],
+  "previewImagesFileNames": [],
+  "subtitle": "",
+  "provider": "Microsoft"
+}

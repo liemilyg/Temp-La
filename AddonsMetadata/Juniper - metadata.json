@@ -1,0 +1,10 @@
+{
+  "addonKey": "JuniperDashboard",
+  "logoFileName": "",
+  "description": "",
+  "dataTypesDependencies": ["Syslog"],
+  "datasourceCardKeysDependencies": ["Syslog"],
+  "previewImagesFileNames": [],
+  "subtitle": "",
+  "provider": "Microsoft"
+}

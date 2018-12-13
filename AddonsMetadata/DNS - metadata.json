@@ -1,0 +1,10 @@
+{
+  "addonKey": "DnsDashboard",
+  "logoFileName": "",
+  "description": "",
+  "dataTypesDependencies": ["DnsInventory", "DnsEvents"],
+  "datasourceCardKeysDependencies": ["DNS"],
+  "previewImagesFileNames": [],
+  "subtitle": "",
+  "provider": "Microsoft"
+}

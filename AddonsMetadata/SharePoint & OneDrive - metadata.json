@@ -1,0 +1,10 @@
+{
+  "addonKey": "SharePointAndOneDriveDashboard",
+  "logoFileName": "",
+  "description": "",
+  "dataTypesDependencies": ["OfficeActivity"],
+  "datasourceCardKeysDependencies": ["Office365"],
+  "previewImagesFileNames": [],
+  "subtitle": "",
+  "provider": "Microsoft"
+}

@@ -1,0 +1,10 @@
+{
+  "addonKey": "Office365Dashboard",
+  "logoFileName": "office365_logo",
+  "description": "",
+  "dataTypesDependencies": ["OfficeActivity"],
+  "datasourceCardKeysDependencies": ["Office365"],
+  "previewImagesFileNames": [],
+  "subtitle": "",
+  "provider": "Microsoft"
+}

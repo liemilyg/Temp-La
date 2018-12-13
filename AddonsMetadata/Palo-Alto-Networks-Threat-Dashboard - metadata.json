@@ -1,0 +1,10 @@
+{
+  "addonKey": "PaloAltoThreatDashboard",
+  "logoFileName": "",
+  "description": "",
+  "dataTypesDependencies": ["CommonSecurityLog"],
+  "datasourceCardKeysDependencies": ["CEF"],
+  "previewImagesFileNames": [],
+  "subtitle": "",
+  "provider": "Microsoft"
+}

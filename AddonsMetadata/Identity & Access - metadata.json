@@ -1,0 +1,10 @@
+{
+  "addonKey": "IdentityAndAccessDashboard",
+  "logoFileName": "",
+  "description": "",
+  "dataTypesDependencies": ["SecurityEvent"],
+  "datasourceCardKeysDependencies": ["SecurityEvent"],
+  "previewImagesFileNames": [],
+  "subtitle": "",
+  "provider": "Microsoft"
+}
