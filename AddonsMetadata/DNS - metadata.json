@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["DnsInventory", "DnsEvents"],
   "datasourceCardKeysDependencies": ["DNS"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "DNS",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/DNS.json",
   "subtitle": "",
   "provider": "Microsoft"
 }
