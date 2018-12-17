@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["OfficeActivity"],
   "datasourceCardKeysDependencies": ["Office365"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Azure Active Directory",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/AddonsMetadataGeneratedArray.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

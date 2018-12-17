@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["SecurityEvent", "Event"],
   "datasourceCardKeysDependencies": ["SecurityEvent"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Insecure Protocols",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/Insecure%20Protocols.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

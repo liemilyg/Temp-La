@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["CommonSecurityLog"],
   "datasourceCardKeysDependencies": ["CEF"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Cylance",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/Cylance.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

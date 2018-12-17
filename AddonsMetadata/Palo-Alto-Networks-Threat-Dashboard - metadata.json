@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["CommonSecurityLog"],
   "datasourceCardKeysDependencies": ["CEF"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Palo Alto Networks Threat",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/Palo-Alto-Networks-Threat-Dashboard.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

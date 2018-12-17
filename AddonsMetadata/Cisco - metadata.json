@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["CommonSecurityLog"],
   "datasourceCardKeysDependencies": ["CEF"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Cisco",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/Cisco.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

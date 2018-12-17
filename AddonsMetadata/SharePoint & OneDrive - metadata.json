@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["OfficeActivity"],
   "datasourceCardKeysDependencies": ["Office365"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "SharePoint & OneDrive",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/SharePoint%20%26%20OneDrive.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

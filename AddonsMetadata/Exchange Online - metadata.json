@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["OfficeActivity"],
   "datasourceCardKeysDependencies": ["Office365"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Exchange Online",
+  "url": "hhttps://raw.githubusercontent.com/liemilyg/temp/master/Exchange%20Online.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

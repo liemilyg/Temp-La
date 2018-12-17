@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["CommonSecurityLog"],
   "datasourceCardKeysDependencies": ["CEF"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "FortiGate",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/FortiGate.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

@@ -5,6 +5,9 @@
   "dataTypesDependencies": ["OfficeActivity"],
   "datasourceCardKeysDependencies": ["Office365"],
   "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Office 365",
+  "url": "https://raw.githubusercontent.com/liemilyg/temp/master/Office%20365.json",
   "subtitle": "",
   "provider": "Microsoft"
 }
