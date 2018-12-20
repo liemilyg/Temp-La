@@ -7,7 +7,7 @@
   "previewImagesFileNames": [],
   "version": "1.0",
   "title": "DNS",
-  "relativePath": "DNS.json",
+  "templateRelativePath": "DNS.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

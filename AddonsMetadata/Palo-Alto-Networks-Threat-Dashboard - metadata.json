@@ -7,7 +7,7 @@
   "previewImagesFileNames": [],
   "version": "1.0",
   "title": "Palo Alto Networks Threat",
-  "relativePath": "Palo-Alto-Networks-Threat-Dashboard.json",
+  "templateRelativePath": "Palo-Alto-Networks-Threat-Dashboard.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

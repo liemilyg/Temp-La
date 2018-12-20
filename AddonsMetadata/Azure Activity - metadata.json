@@ -1,0 +1,13 @@
+{
+  "addonKey": "AzureActivityDashboard",
+  "logoFileName": "",
+  "description": "",
+  "dataTypesDependencies": ["AzureActivity"],
+  "datasourceCardKeysDependencies": ["AzureActivity"],
+  "previewImagesFileNames": [],
+  "version": "1.0",
+  "title": "Azure Activity",
+  "templateRelativePath": "Azure Activity.json",
+  "subtitle": "",
+  "provider": "Microsoft"
+}

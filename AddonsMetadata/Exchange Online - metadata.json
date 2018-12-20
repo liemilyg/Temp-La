@@ -7,7 +7,7 @@
   "previewImagesFileNames": [],
   "version": "1.0",
   "title": "Exchange Online",
-  "relativePath": "Exchange Online.json",
+  "templateRelativePath": "Exchange Online.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

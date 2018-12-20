@@ -7,7 +7,7 @@
   "previewImagesFileNames": [],
   "version": "1.0",
   "title": "Cylance",
-  "relativePath": "Cylance.json",
+  "templateRelativePath": "Cylance.json",
   "subtitle": "",
   "provider": "Microsoft"
 }

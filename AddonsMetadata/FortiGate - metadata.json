@@ -7,7 +7,7 @@
   "previewImagesFileNames": [],
   "version": "1.0",
   "title": "FortiGate",
-  "relativePath": "FortiGate.json",
+  "templateRelativePath": "FortiGate.json",
   "subtitle": "",
   "provider": "Microsoft"
 }
