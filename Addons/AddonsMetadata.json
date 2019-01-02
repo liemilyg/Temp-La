@@ -148,7 +148,7 @@
     "description": "",
     "dataTypesDependencies": [ "CommonSecurityLog" ],
     "datasourceCardKeysDependencies": [ "CEF" ],
-    "previewImagesFileNames": [],
+    "previewImagesFileNames": ["palo alto white.PNG"],
     "version": "1.0",
     "title": "Palo Alto",
     "templateRelativePath": "Palo Alto.json",
