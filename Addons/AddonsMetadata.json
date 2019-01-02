@@ -27,7 +27,7 @@
   },
   {
     "addonKey": "CiscoDashboard",
-    "logoFileName": "cisco_logo",
+    "logoFileName": "cisco_logo.svg",
     "description": "",
     "dataTypesDependencies": [ "CommonSecurityLog" ],
     "datasourceCardKeysDependencies": [ "CEF" ],
@@ -53,7 +53,7 @@
   },
   {
     "addonKey": "DnsDashboard",
-    "logoFileName": "dns_logo",
+    "logoFileName": "dns_logo.svg",
     "description": "",
     "dataTypesDependencies": [ "DnsInventory", "DnsEvents" ],
     "datasourceCardKeysDependencies": [ "DNS" ],
@@ -79,7 +79,7 @@
   },
   {
     "addonKey": "FortiGateDashboard",
-    "logoFileName": "fortinet_logo",
+    "logoFileName": "fortinet_logo.svg",
     "description": "",
     "dataTypesDependencies": [ "CommonSecurityLog" ],
     "datasourceCardKeysDependencies": [ "CEF" ],
@@ -131,7 +131,7 @@
   },
   {
     "addonKey": "Office365Dashboard",
-    "logoFileName": "office365_logo",
+    "logoFileName": "office365_logo.svg",
     "description": "",
     "dataTypesDependencies": [ "OfficeActivity" ],
     "datasourceCardKeysDependencies": [ "Office365" ],
