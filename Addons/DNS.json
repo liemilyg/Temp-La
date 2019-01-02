@@ -1,10 +1,10 @@
 {
-  "name": "AzureActivityDashboard_{Workspace_Name}",
+  "name": "DnsDashboard_{Workspace_Name}",
   "type": "Microsoft.Portal/dashboards",
   "location": "{Dashboard_Location}",
   "tags": {
-    "addonKey": "AzureActivityDashboard",
-    "hidden-title": "Azure Activity - {Workspace_Name}",
+    "addonKey": "DnsDashboard",
+    "hidden-title": "DNS - {Workspace_Name}",
     "version": "1.0",
     "workspaceName": "{Workspace_Name}"
   },
@@ -17,7 +17,7 @@
             "position": {
               "x": 1,
               "y": 0,
-              "colSpan": 18,
+              "colSpan": 23,
               "rowSpan": 1
             },
             "metadata": {
@@ -26,7 +26,7 @@
               "settings": {
                 "content": {
                   "settings": {
-                    "content": "<div style=\"font-size:300%;\">General overview</div>",
+                    "content": "<div style=\"font-size:300%;\">DNS servers, Malicious traffic</div>",
                     "title": "",
                     "subtitle": ""
                   }
@@ -35,27 +35,6 @@
             }
           },
           "1": {
-            "position": {
-              "x": 19,
-              "y": 0,
-              "colSpan": 6,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<img width='250px' height='52px' src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Microsoft_Azure_Logo.svg/2000px-Microsoft_Azure_Logo.svg.png'/>\n",
-                    "title": "",
-                    "subtitle": ""
-                  }
-                }
-              }
-            }
-          },
-          "2": {
             "position": {
               "x": 0,
               "y": 1,
@@ -74,28 +53,11 @@
                 },
                 {
                   "name": "Query",
-                  "value": "//number of logs over time scale of a week\nAzureActivity\n| summarize numOfLogs = count() by bin_at(TimeGenerated, 1h, now())"
-                },
-				{
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "DnsInventory\n| where SubType == \"Server\"\n| project Computer, DomainName, ForestName, ServerIPs"
                 },
                 {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "numOfLogs",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Version",
@@ -103,19 +65,19 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "6e356016-1a9e-4081-b7ed-be98cead411e"
+                  "value": "9fc81d6a-db59-4bac-b172-87cd541a6216"
                 },
                 {
                   "name": "PartTitle",
-                  "value": "Events over time"
+                  "value": "Analytics"
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": " "
+                  "value": "{Workspace_Name}"
                 },
                 {
                   "name": "resourceTypeMode",
@@ -123,25 +85,35 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsChart"
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
                 },
                 {
                   "name": "SpecificChart",
-                  "value": "Line"
+                  "isOptional": true
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Active DNS servers",
+                  "PartSubTitle": " "
+                }
+              },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
               }
             }
           },
-          "3": {
+          "2": {
             "position": {
               "x": 12,
               "y": 1,
-              "colSpan": 13,
+              "colSpan": 6,
               "rowSpan": 4
             },
             "metadata": {
@@ -156,36 +128,11 @@
                 },
                 {
                   "name": "Query",
-                  "value": "AzureActivity\n| summarize Informational = countif(Level == \"Informational\"), Warning = countif(Level == \"Warning\"), Error = countif(Level == \"Error\") by bin_at(TimeGenerated, 1h, now())\n"
+                  "value": "DnsEvents\n| where SubType == 'LookupQuery' and isnotempty(MaliciousIP)\n| summarize Attempts = count() by  Computer,RemoteIPCountry, IndicatorThreatType\n| order by Attempts desc"
                 },
                 {
                   "name": "TimeRange",
                   "value": "P1D"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "Informational",
-                        "type": "Int64"
-                      },
-                      {
-                        "name": "Warning",
-                        "type": "Int64"
-                      },
-                      {
-                        "name": "Error",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
                 },
                 {
                   "name": "Version",
@@ -193,19 +140,19 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/01970238-40bc-4830-b94e-1d162d1c45da"
                 },
                 {
                   "name": "PartId",
-                  "value": "1cad8c29-b188-4243-ab0b-f5af1874ee8e"
+                  "value": "201e8880-1e04-474a-86eb-dfc5acb1aff1"
                 },
                 {
                   "name": "PartTitle",
-                  "value": "Level of operations"
+                  "value": "Analytics"
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": " "
+                  "value": "{Workspace_Name}"
                 },
                 {
                   "name": "resourceTypeMode",
@@ -213,14 +160,99 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsChart"
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
                 },
                 {
                   "name": "SpecificChart",
-                  "value": "Bar"
+                  "isOptional": true
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Malicious traffic",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "3": {
+            "position": {
+              "x": 18,
+              "y": 1,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "DnsEvents\n| where SubType == 'LookupQuery' and isnotempty(MaliciousIP)\n| summarize Attempts = count() by ClientIP, MaliciousIP\n| project ClientIP , MaliciousIP, Attempts"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "5693643d-721f-455b-971f-aefb76a5a058"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Malicious Traffic by Client IP, Attempts",
+                  "PartSubTitle": " "
+                }
+              },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
@@ -231,330 +263,27 @@
             "position": {
               "x": 0,
               "y": 5,
-              "colSpan": 6,
-              "rowSpan": 8
+              "colSpan": 24,
+              "rowSpan": 1
             },
             "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}"
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style=\"font-size:300%;\">DNS Events Overview</div>",
+                    "title": "",
+                    "subtitle": ""
                   }
-                },
-                {
-                  "name": "Query",
-                  "value": "AzureActivity\n| summarize Operations = count() by OperationName\n| sort by Operations \n"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "600332c7-db91-42d7-91c2-9c6e92cc7bbd"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Operation types"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "Ordered by popularity"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
                 }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
               }
             }
           },
           "5": {
             "position": {
-              "x": 6,
-              "y": 5,
-              "colSpan": 10,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "AzureActivity\n| summarize deletions = countif(OperationName contains \"Delete\"), creations = countif(OperationName contains \"Create\"), updates = countif(OperationName contains \"Update\") by bin_at(TimeGenerated, 1h, now())"
-                },
-				{
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "deletions",
-                        "type": "Int64"
-                      },
-                      {
-                        "name": "creations",
-                        "type": "Int64"
-                      },
-                      {
-                        "name": "updates",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "1671e83f-7f72-4bd0-b3ab-16786cf254e4"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Deletions VS Creations VS Updates over time"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": " "
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsChart"
-                },
-                {
-                  "name": "SpecificChart",
-                  "value": "Line"
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "6": {
-            "position": {
-              "x": 16,
-              "y": 5,
-              "colSpan": 9,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//activity splited to 10 top resource groups responsable\nAzureActivity\n| summarize Operations = count() by ResourceGroup\n| top 10 by Operations desc nulls last \n"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "ResourceGroup",
-                      "type": "String"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "Operations",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "ce1f195c-da02-46b2-a3a9-c06559905b56"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Top 10 resource groups"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "Number of operations per group"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsChart"
-                },
-                {
-                  "name": "SpecificChart",
-                  "value": "Bar"
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "7": {
-            "position": {
-              "x": 6,
-              "y": 9,
-              "colSpan": 7,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/Microsoft.OperationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "AzureActivity\n| summarize AggregatedValue = count() by ActivityStatus\n| order by AggregatedValue  desc\n"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "ActivityStatus",
-                      "type": "String"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "AggregatedValue",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "d41c8c65-4299-4bac-9eb9-773343dcc320"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Activity logs grouped by status"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": " "
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsDonut"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "8": {
-            "position": {
-              "x": 13,
-              "y": 9,
+              "x": 0,
+              "y": 6,
               "colSpan": 12,
               "rowSpan": 4
             },
@@ -565,13 +294,12 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/Microsoft.OperationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "AzureActivity\n| summarize AggregatedValue = count() by ActivityStatus, bin(TimeGenerated, 1h)\n"
+                  "value": "DnsEvents\n| summarize Events = count() by bin_at(TimeGenerated, 1h, now())\n| render timechart"
                 },
                 {
                   "name": "TimeRange",
@@ -586,16 +314,11 @@
                     },
                     "yAxis": [
                       {
-                        "name": "AggregatedValue",
+                        "name": "Events",
                         "type": "Int64"
                       }
                     ],
-                    "splitBy": [
-                      {
-                        "name": "ActivityStatus",
-                        "type": "String"
-                      }
-                    ],
+                    "splitBy": [],
                     "aggregation": "Sum"
                   }
                 },
@@ -605,19 +328,304 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "d69567c3-50e8-4a34-a891-83a3bccf1006"
+                  "value": "9f161269-de8d-49b7-9939-a40f3cad135e"
                 },
                 {
                   "name": "PartTitle",
-                  "value": "Activity status amount"
+                  "value": "Analytics"
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": " "
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsChart"
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Line"
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "DNS events per hour",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "6": {
+            "position": {
+              "x": 12,
+              "y": 6,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "DnsEvents\n| summarize count()  by SubType\n| order by count_ desc \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "SubType",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "c0447705-bb68-4381-a398-b8839d36657c"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "DNS events divided into SubType",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "7": {
+            "position": {
+              "x": 18,
+              "y": 6,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "DnsEvents\n| extend type = case(\n    QueryType == \"A\", \"IPv4 address record\", \n    QueryType == \"AAAA\", \"IPv6 address record\",\n    QueryType == \"ANY\", \"All cached records\",\n    QueryType == \"CNAME\", \"Canonical name record\",\n    QueryType == \"MX\", \"Mail exchange record\",\n    QueryType == \"NS\", \"Name server record\",\n    QueryType == \"PTR\", \"Pointer record\",\n    QueryType == \"SIG\", \"Signature\",\n    QueryType == \"SOA\", \"Start of authority record\",\n    QueryType == \"SRV\", \"Service locator\",\n    QueryType == \"TXT\", \"Text record\",\n    strcat('Other'))\n| summarize count()  by type\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "type",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "464ca10f-fb7c-410a-b8f8-730a3f711b65"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "DNS events divided into query type",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "8": {
+            "position": {
+              "x": 0,
+              "y": 10,
+              "colSpan": 24,
+              "rowSpan": 1
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style=\"font-size:300%;\">Domains Overview</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "9": {
+            "position": {
+              "x": 0,
+              "y": 11,
+              "colSpan": 12,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "DnsEvents\n| where SubType == \"LookupQuery\" \n| summarize Domains = dcount(Name) by bin_at(TimeGenerated, 1h, now())"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "Domains",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "0fc7b6c7-2670-4aa5-8981-8b81a43b902e"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
                 },
                 {
                   "name": "resourceTypeMode",
@@ -633,38 +641,23 @@
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Unique number of domains queried",
+                  "PartSubTitle": "Per hour"
+                }
+              },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
-              }
-            }
-          },
-          "9": {
-            "position": {
-              "x": 0,
-              "y": 13,
-              "colSpan": 25,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<div style=\"font-size:300%;\">Callers</div>",
-                    "title": "",
-                    "subtitle": ""
-                  }
-                }
               }
             }
           },
           "10": {
             "position": {
-              "x": 0,
-              "y": 14,
-              "colSpan": 6,
+              "x": 12,
+              "y": 11,
+              "colSpan": 3,
               "rowSpan": 4
             },
             "metadata": {
@@ -679,195 +672,31 @@
                 },
                 {
                   "name": "Query",
-                  "value": "AzureActivity\n| where Caller != \"\"\n| summarize count() by Caller\n"
+                  "value": "DnsEvents\n|where SubType == \"LookupQuery\" \n| summarize count() by Name\n| order by count_ desc \n| project Domain = Name , Queries=count_ "
                 },
                 {
                   "name": "TimeRange",
                   "value": "P1D"
                 },
                 {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "Caller",
-                      "type": "String"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "count_",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
                   "name": "Version",
                   "value": "1.0"
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "cab4a4c4-903d-43c7-b4ab-817c34b74527"
+                  "value": "77ecb703-b938-4792-ac1f-d7d6c3169af7"
                 },
                 {
                   "name": "PartTitle",
-                  "value": "Operations by callers"
+                  "value": "Analytics"
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": " "
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsDonut"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "11": {
-            "position": {
-              "x": 6,
-              "y": 14,
-              "colSpan": 9,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "AzureActivity\n| summarize uniqueCallersActive = dcount(Caller) by bin_at(TimeGenerated, 1h, now())\n| render timechart \n"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "uniqueCallersActive",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "838aeeae-daed-4898-a876-1e555d1b395f"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Number of unique active callers"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": " "
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsChart"
-                },
-                {
-                  "name": "SpecificChart",
-                  "value": "UnstackedArea"
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "12": {
-            "position": {
-              "x": 15,
-              "y": 14,
-              "colSpan": 10,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "AzureActivity\n| where Caller != \"\" and TimeGenerated >= ago(14d)\n| where Category == \"Administrative\"\n| summarize Current_Week = countif(TimeGenerated >= ago(7d)), Previous_Week = countif(TimeGenerated < ago(7d)) by Caller\n| where Current_Week > Previous_Week\n| extend growth = iif(Previous_Week != 0, toreal(Current_Week)/toreal(Previous_Week), toreal(Current_Week))\n| sort by growth desc nulls last\n| project Caller, Previous_Week, Current_Week , growth = strcat(\"+\", growth, \"%\")\n| take 10"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P7D"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "be0ee18c-cb3a-46a0-9fee-4826bd0243c9"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Top 10 Callers with highest growth of operations"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "Week Over Week"
+                  "value": "{Workspace_Name}"
                 },
                 {
                   "name": "resourceTypeMode",
@@ -887,17 +716,98 @@
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Top domains queried",
+                  "PartSubTitle": "Including amount of queries"
+                }
+              },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
               }
             }
           },
-          "13": {
+          "11": {
+            "position": {
+              "x": 15,
+              "y": 11,
+              "colSpan": 9,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "DnsEvents\n| extend NameParts = split(Name,'.')\n//Break the domain into its parts\n| extend Top_Level_Domain =  strcat(NameParts[toint(array_length(NameParts)-2)],'.',NameParts[toint(array_length(NameParts)-1)] )\n//Use the rightmost parts of the URL\n| extend Top_Level_Domain = iif(strlen(Top_Level_Domain)<7,strcat(NameParts[toint(array_length(NameParts)-3)],'.',Top_Level_Domain),Top_Level_Domain)\n//If the two right most parts are too short (e.g. \"co.uk\" or \"com.tr\", add another part\n| summarize SubDomainCount = count() by Top_Level_Domain, Name\n| join kind= inner\n(\n    DnsEvents\n    | extend NameParts = split(Name,'.')\n    //Break the domain into its parts\n    | extend Top_Level_Domain =  strcat(NameParts[toint(array_length(NameParts)-2)],'.',NameParts[toint(array_length(NameParts)-1)] )\n    //Use the rightmost parts of the URL\n    | extend Top_Level_Domain = iif(strlen(Top_Level_Domain)<7,strcat(NameParts[toint(array_length(NameParts)-3)],'.',Top_Level_Domain),Top_Level_Domain)\n    //If the two right most parts are too short (e.g. \"co.uk\" or \"com.tr\", add another part\n    | summarize Total_Sub_Domains = count() by Top_Level_Domain\n)\non Top_Level_Domain\n| extend pk = SubDomainCount/todouble(Total_Sub_Domains)\n| extend h1= -log2(pk)*pk\n//calculate entropy according to Sannon function https://en.wiktionary.org/wiki/Shannon_entropy\n| summarize Sub_Domain_Entropy = sum(h1), Total_Sub_Domains = any(Total_Sub_Domains) ,makelist(Name)  by Top_Level_Domain\n| order by Sub_Domain_Entropy desc"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "a1bce717-3de7-4612-99fc-14903f407339"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Domain entropy ",
+                  "PartSubTitle": "Name, Entropy Score, Number Of Domains, "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "12": {
             "position": {
               "x": 0,
-              "y": 18,
-              "colSpan": 25,
+              "y": 15,
+              "colSpan": 12,
               "rowSpan": 1
             },
             "metadata": {
@@ -906,7 +816,28 @@
               "settings": {
                 "content": {
                   "settings": {
-                    "content": "<div style=\"font-size:300%;\">Fails, Warnings</div>",
+                    "content": "<div style=\"font-size:300%;\">Lookup Queries</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "13": {
+            "position": {
+              "x": 12,
+              "y": 15,
+              "colSpan": 6,
+              "rowSpan": 1
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style=\"font-size:300%;\">Configoration Queries</div>",
                     "title": "",
                     "subtitle": ""
                   }
@@ -916,8 +847,29 @@
           },
           "14": {
             "position": {
+              "x": 18,
+              "y": 15,
+              "colSpan": 6,
+              "rowSpan": 1
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style=\"font-size:300%;\">Dynamic Registration</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "15": {
+            "position": {
               "x": 0,
-              "y": 19,
+              "y": 16,
               "colSpan": 6,
               "rowSpan": 4
             },
@@ -933,7 +885,183 @@
                 },
                 {
                   "name": "Query",
-                  "value": "//Get operation with most warning level logs\nAzureActivity\n| where Level == \"Warning\"\n| summarize Count = count() by OperationName\n| top 10 by Count "
+                  "value": "DnsEvents\n| where SubType == \"LookupQuery\"\n| summarize count() by ClientIP\n| order by count_ desc\n| project IP = ClientIP , Queries=count_\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "IP",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "Queries",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "4676c2ab-ff67-4202-b2cc-1791c2ad62bf"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Queries by client IP",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "16": {
+            "position": {
+              "x": 6,
+              "y": 16,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "DnsEvents\n| where SubType == \"LookupQuery\"\n| extend Reasons = case(\n    ResultCode == 0, \"No Error\",\n    ResultCode == 1, \"Format Error\",\n    ResultCode == 2, \"Server Failure\",\n    ResultCode == 3, \"Non-Existent Domain\",\n    ResultCode == 4, \"Not Implemented\",\n    ResultCode == 5, \"Query Refused\",\n    ResultCode == 6, \"Name Exists when it should not\",\n    ResultCode == 7, \"RR Set Exists when it should not\",\n    ResultCode == 8, \"RR Set that should exist does not\",\n    ResultCode == 9, \"Server Not Authoritative for zone\",\n    ResultCode == 10, \"Name not contained in zone\",\n    ResultCode == 16, \"TSIG Signature Failure\",\n    ResultCode == 17, \"Key not recognized\",\n    ResultCode == 18, \"Signature out of time window\",\n    ResultCode == 19, \"Bad TKEY Mode\",\n    ResultCode == 20, \"Duplicate key name\",\n    ResultCode == 21, \"Algorithm not supported\",\n    ResultCode == 22, \"Bad Truncation\",\n    ResultCode == 23, \"Bad/missing Server Cookie\",\n    strcat('Other', ResultCode))\n| summarize count() by Reasons"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "Reasons",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "a49a050a-ea6f-4b43-a255-fea6dc2cf925"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Queries by result codes returned",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "17": {
+            "position": {
+              "x": 12,
+              "y": 16,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//DNS Configuration Events\nDnsEvents\n| where SubType == \"ConfigurationChange\"\n| project TimeGenerated, Category = TaskCategory, Event_ID = EventId"
                 },
                 {
                   "name": "TimeRange",
@@ -945,19 +1073,19 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "896647f4-8658-42a8-826d-cc9880f219ca"
+                  "value": "724ac038-d40b-409d-a7ab-988be6f3d47a"
                 },
                 {
                   "name": "PartTitle",
-                  "value": "Operations with most warning level logs"
+                  "value": "Analytics"
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "Top 10"
+                  "value": "{Workspace_Name}"
                 },
                 {
                   "name": "resourceTypeMode",
@@ -977,17 +1105,23 @@
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "DNS configuration events",
+                  "PartSubTitle": "Time, Category, Event ID"
+                }
+              },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
               }
             }
           },
-          "15": {
+          "18": {
             "position": {
-              "x": 6,
-              "y": 19,
-              "colSpan": 9,
+              "x": 18,
+              "y": 16,
+              "colSpan": 6,
               "rowSpan": 4
             },
             "metadata": {
@@ -1002,7 +1136,7 @@
                 },
                 {
                   "name": "Query",
-                  "value": "AzureActivity\n| where ActivityStatus == \"Failed\"\n| summarize count() by bin_at(TimeGenerated, 1h, now()), ActivitySubstatus\n| extend ActivitySubstatus = iff(ActivitySubstatus == \"\", ActivitySubstatus = \"Unknown\", ActivitySubstatus = ActivitySubstatus) \n| render timechart\n"
+                  "value": "DnsEvents\n| where SubType == \"DynamicRegistration\"\n| summarize count() by Result\n"
                 },
                 {
                   "name": "TimeRange",
@@ -1012,93 +1146,7 @@
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "count_",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [
-                      {
-                        "name": "ActivitySubstatus",
-                        "type": "String"
-                      }
-                    ],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "58ba7dc4-7121-4687-b090-fe05bc8e3f71"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Failed operations by reason of fail"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": " "
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsChart"
-                },
-                {
-                  "name": "SpecificChart",
-                  "value": "Line"
-                }              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "16": {
-            "position": {
-              "x": 15,
-              "y": 19,
-              "colSpan": 4,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "AzureActivity\n| where ActivityStatus == \"Failed\"\n| summarize count() by OperationName\n"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "OperationName",
+                      "name": "Result",
                       "type": "String"
                     },
                     "yAxis": [
@@ -1117,19 +1165,19 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/DnsDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "2b3f87bf-ef26-4198-9f31-53b92324cc34"
+                  "value": "29c7a67a-a7b2-4dfb-b1a6-7ab5448a0ec9"
                 },
                 {
                   "name": "PartTitle",
-                  "value": "Failures by operation"
+                  "value": "Analytics"
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": " "
+                  "value": "{Workspace_Name}"
                 },
                 {
                   "name": "resourceTypeMode",
@@ -1145,96 +1193,19 @@
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "17": {
-            "position": {
-              "x": 19,
-              "y": 19,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/Microsoft.OperationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//Time chart of Failed operations Code : 404 by hour\nAzureActivity\n| where ActivityStatus == \"Failed\" and ActivitySubstatus == \"Not Found (HTTP Status Code: 404)\"\n| summarize 404_Errors = count() by bin_at(TimeGenerated, 1h, now())\n| render timechart \n"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "404_Errors",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActivityDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "503e18f3-4ad7-4ca5-bdf7-3ccb98c53805"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Failed operations reason : 404 error"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": " "
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsChart"
-                },
-                {
-                  "name": "SpecificChart",
-                  "value": "Line"
+              "settings": {
+                "content": {
+                  "PartTitle": "Dynamic registration events",
+                  "PartSubTitle": "Fail VS Success"
                 }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
               }
             }
           },
-		  "18": {
+          "19": {
             "position": {
               "x": 0,
               "y": 0,
@@ -1254,12 +1225,16 @@
                 {
                   "name": "workspaceName",
                   "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "menuItemToOpen",
+                  "value": "Addons"
                 }
               ],
               "type": "Extension/Microsoft_Azure_Security_Insights/PartType/AsiOverviewPart",
               "defaultMenuItemId": "0"
             }
-		  }
+          }
         }
       }
     }

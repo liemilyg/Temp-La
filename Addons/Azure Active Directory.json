@@ -1,10 +1,10 @@
 {
-  "name": "CylanceDashboard_{Workspace_Name}",
+  "name": "AzureActiveDirectoryDashboard_{Workspace_Name}",
   "type": "Microsoft.Portal/dashboards",
   "location": "{Dashboard_Location}",
   "tags": {
-    "addonKey": "CylanceDashboard",
-    "hidden-title": "Cylance - {Workspace_Name}",
+    "addonKey": "AzureActiveDirectoryDashboard",
+    "hidden-title": "Azure Active Directory - {Workspace_Name}",
     "version": "1.0",
     "workspaceName": "{Workspace_Name}"
   },
@@ -17,7 +17,7 @@
             "position": {
               "x": 1,
               "y": 0,
-              "colSpan": 11,
+              "colSpan": 17,
               "rowSpan": 1
             },
             "metadata": {
@@ -26,7 +26,7 @@
               "settings": {
                 "content": {
                   "settings": {
-                    "content": "<div style='font-size:300%;'>Cylance Overview</div> ",
+                    "content": "<div style='font-size:300%;'>General overview</div>",
                     "title": "",
                     "subtitle": ""
                   }
@@ -36,9 +36,9 @@
           },
           "1": {
             "position": {
-              "x": 12,
+              "x": 19,
               "y": 0,
-              "colSpan": 6,
+              "colSpan": 7,
               "rowSpan": 1
             },
             "metadata": {
@@ -47,7 +47,7 @@
               "settings": {
                 "content": {
                   "settings": {
-                    "content": "<body style='background-color:#FF0000;'><img width='600' height='50' src='https://download.cylance.com/updates/CylanceDetectImages/cylance_signin_logo.png'/> \n</body>",
+                    "content": "<div style='font-size:300%;'>Users Activity</div>",
                     "title": "",
                     "subtitle": ""
                   }
@@ -69,33 +69,31 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//log type trend\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| summarize LogTypeCount= count() by LogType , TimeGenerated\n"
+                  "value": "//Top AzureActiveDirectory operations \nOfficeActivity \n| where OfficeWorkload == 'AzureActiveDirectory' \n| summarize count() by Operation \n| order by count_ \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
+                      "name": "Operation",
+                      "type": "String"
                     },
                     "yAxis": [
                       {
-                        "name": "LogTypeCount",
+                        "name": "count_",
                         "type": "Int64"
                       }
                     ],
-                    "splitBy": [
-                      {
-                        "name": "LogType",
-                        "type": "String"
-                      }
-                    ],
+                    "splitBy": [],
                     "aggregation": "Sum"
                   }
                 },
@@ -105,11 +103,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "d88fd7ce-0325-45b7-80bf-7f4aa8709fa7"
+                  "value": "e5af5953-8c1e-436a-ae56-a76ff225ea07"
                 },
                 {
                   "name": "PartTitle",
@@ -117,7 +115,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -125,22 +123,18 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsChart"
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
-                  "value": "Bar"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "isOptional": true
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Event Type Time Trend",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Operations by type",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -153,7 +147,7 @@
             "position": {
               "x": 6,
               "y": 1,
-              "colSpan": 6,
+              "colSpan": 12,
               "rowSpan": 4
             },
             "metadata": {
@@ -163,13 +157,100 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//log volume trend\nSyslog\n| where Computer =~ 'sysloghost' \n| summarize LogVolume= count() by TimeGenerated "
+                  "value": "//AzureActiveDirectory operations over time\nOfficeActivity\n| where TimeGenerated >= ago(14d)\n| where OfficeWorkload == 'AzureActiveDirectory'\n| summarize Current_Week = countif(TimeGenerated >= ago(7d)), Previous_Week = countif(TimeGenerated < ago(7d)) by Operation\n| extend Per = iff(Current_Week > Previous_Week, toreal(Current_Week) / Previous_Week, toreal(Previous_Week) / Current_Week)\n| extend sign = iff(Current_Week > Previous_Week, '+', '-')\n| extend Percentage = iff(Current_Week != 0 and Previous_Week != 0 and Previous_Week != Current_Week, strcat(sign, extract(@'(\\d*(\\.\\d{1,2}|$))', 1, tostring((Per -1 )*100)), '%'), 'No Percentage - 0')\n| project Operation, Previous_Week, Current_Week, Percentage\n"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "4ee3fbd9-18e7-402f-a1df-d7ef71a7b74a"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": ""
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Activity per operation",
+                  "PartSubTitle": "Week Over Week"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              },
+              "filters": {
+                "MsPortalFx_TimeRange": {
+                  "model": {
+                    "format": "local",
+                    "granularity": "auto",
+                    "relative": "1d"
+                  }
+                }
+              }
+            }
+          },
+          "4": {
+            "position": {
+              "x": 19,
+              "y": 1,
+              "colSpan": 7,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//AzureActiveDirectory operations over time\nOfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| summarize Events = count() by bin_at(TimeGenerated, 1d, now()) \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
@@ -180,7 +261,7 @@
                     },
                     "yAxis": [
                       {
-                        "name": "LogVolume",
+                        "name": "Events",
                         "type": "Int64"
                       }
                     ],
@@ -194,11 +275,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "5256b3b9-e294-49be-95da-c01b3eec7bf9"
+                  "value": "3e977483-2bd7-4c13-a17b-ac02b5886bbc"
                 },
                 {
                   "name": "PartTitle",
@@ -206,7 +287,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -219,111 +300,27 @@
                 {
                   "name": "SpecificChart",
                   "value": "Line"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Event Count Time Trend",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Activity over time",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
-              }
-            }
-          },
-          "4": {
-            "position": {
-              "x": 12,
-              "y": 1,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "// log type count\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| summarize LogTypeCount= count() by LogType \n"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "LogType",
-                      "type": "String"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "LogTypeCount",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "8c4bdd63-3db8-4c6f-8479-2e730f87ad1e"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsDonut"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Event Type Summary",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
               },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
+              "filters": {
+                "MsPortalFx_TimeRange": {
+                  "model": {
+                    "format": "local",
+                    "granularity": "auto",
+                    "relative": "1d"
+                  }
+                }
               }
             }
           },
@@ -340,7 +337,7 @@
               "settings": {
                 "content": {
                   "settings": {
-                    "content": "<div style='font-size:300%;'>Malware Posture In Environment</div> ",
+                    "content": "<div style='font-size:300%;'>Additions, Updates, Deletions</div>",
                     "title": "",
                     "subtitle": ""
                   }
@@ -350,10 +347,10 @@
           },
           "6": {
             "position": {
-              "x": 0,
-              "y": 6,
-              "colSpan": 6,
-              "rowSpan": 4
+              "x": 19,
+              "y": 5,
+              "colSpan": 7,
+              "rowSpan": 5
             },
             "metadata": {
               "inputs": [
@@ -362,13 +359,16 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//top 5 malware seen\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend MalwareMD5= extract('MD5: (.*?),',1,SyslogMessage) \n| summarize MalwareCount= count() by MalwareMD5\n| top 5 by MalwareCount desc  \n"
+                  "value": "//AzureActiveDirectory operations over time\nOfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| summarize Amount = count() by UserId\n| top 10 by Amount\n| project User_ID =  UserId, Amount\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Version",
@@ -376,11 +376,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "a63faa99-b0b5-42c7-8e8f-7de3bca4391b"
+                  "value": "c6004e80-d6bb-475d-aba9-bd817d97de00"
                 },
                 {
                   "name": "PartTitle",
@@ -388,7 +388,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -403,10 +403,6 @@
                   "isOptional": true
                 },
                 {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
                   "name": "SpecificChart",
                   "isOptional": true
                 }
@@ -414,8 +410,8 @@
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Top 5 Malwares Detected By Count",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Top 10 active users",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -426,9 +422,9 @@
           },
           "7": {
             "position": {
-              "x": 6,
+              "x": 0,
               "y": 6,
-              "colSpan": 6,
+              "colSpan": 18,
               "rowSpan": 4
             },
             "metadata": {
@@ -438,13 +434,41 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//Threat classification\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend Classification= extract('Threat Classification: (.*?)#',1,SyslogMessage)\n| summarize count() by Classification \n| top 5 by count_ desc \n"
+                  "value": "OfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| summarize additions = countif(Operation contains 'add'), updates = countif(Operation contains 'Update'), deletions = countif(Operation contains 'Delete') by bin_at(TimeGenerated, 1d, now())"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "deletions",
+                        "type": "Int64"
+                      },
+                      {
+                        "name": "additions",
+                        "type": "Int64"
+                      },
+                      {
+                        "name": "updates",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
                 },
                 {
                   "name": "Version",
@@ -452,11 +476,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "ac7b0173-e513-4388-a1cc-8cf5b7498893"
+                  "value": "d95e9c41-ab8b-44e5-931e-3511521bafcd"
                 },
                 {
                   "name": "PartTitle",
@@ -464,7 +488,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -472,38 +496,39 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "AnalyticsChart"
                 },
                 {
                   "name": "SpecificChart",
-                  "isOptional": true
+                  "value": "Line"
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Top 5 Malware Type By Count",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Additions VS Updates VS Deletions",
+                  "PartSubTitle": "Over the past week"
                 }
               },
               "asset": {
                 "idInputName": "ComponentId",
                 "type": "ApplicationInsights"
+              },
+              "filters": {
+                "MsPortalFx_TimeRange": {
+                  "model": {
+                    "format": "local",
+                    "granularity": "auto",
+                    "relative": "1d"
+                  }
+                }
               }
             }
           },
           "8": {
             "position": {
-              "x": 12,
-              "y": 6,
+              "x": 0,
+              "y": 10,
               "colSpan": 6,
               "rowSpan": 4
             },
@@ -514,13 +539,38 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//how new is malware\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend Unique= extract('Is Unique To Cylance: (.*?),',1,SyslogMessage)\n| summarize count() by Unique \n"
+                  "value": "OfficeActivity  \n| where OfficeWorkload == 'AzureActiveDirectory' \n| where Operation contains 'add' \n| summarize count() by Operation, bin_at(TimeGenerated, 1h, now())  \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [
+                      {
+                        "name": "Operation",
+                        "type": "String"
+                      }
+                    ],
+                    "aggregation": "Sum"
+                  }
                 },
                 {
                   "name": "Version",
@@ -528,11 +578,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "8e4ef54c-4a1f-4101-a8eb-390059b26332"
+                  "value": "412f8581-42fe-4c76-850c-9aec4004d2b4"
                 },
                 {
                   "name": "PartTitle",
@@ -540,7 +590,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -548,26 +598,18 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "AnalyticsChart"
                 },
                 {
                   "name": "SpecificChart",
-                  "isOptional": true
+                  "value": "GroupedBar"
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Is This First Time Cylance Has Seen This Malware?",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Adding operations",
+                  "PartSubTitle": "by type, over time"
                 }
               },
               "asset": {
@@ -578,29 +620,8 @@
           },
           "9": {
             "position": {
-              "x": 0,
+              "x": 6,
               "y": 10,
-              "colSpan": 18,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<div style='font-size:300%;'>Threat Posture In Environment</div> ",
-                    "title": "",
-                    "subtitle": ""
-                  }
-                }
-              }
-            }
-          },
-          "10": {
-            "position": {
-              "x": 0,
-              "y": 11,
               "colSpan": 6,
               "rowSpan": 4
             },
@@ -611,13 +632,38 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//Detected By\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend DetectionMethod= extract('Detected By: (.*?),',1,SyslogMessage)\n| summarize count() by DetectionMethod\n"
+                  "value": "OfficeActivity  \n| where OfficeWorkload == 'AzureActiveDirectory' \n| where Operation contains 'update' \n| summarize count() by Operation, bin_at(TimeGenerated, 1h, now())  \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [
+                      {
+                        "name": "Operation",
+                        "type": "String"
+                      }
+                    ],
+                    "aggregation": "Sum"
+                  }
                 },
                 {
                   "name": "Version",
@@ -625,11 +671,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "106a734c-1b9a-44e9-8541-b4b2b1f787fb"
+                  "value": "02bfb13a-3fa6-4cb0-ae06-80af5dd6ab54"
                 },
                 {
                   "name": "PartTitle",
@@ -637,7 +683,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -645,27 +691,111 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsGrid"
+                  "value": "AnalyticsChart"
                 },
                 {
-                  "name": "Dimensions",
-                  "isOptional": true
+                  "name": "SpecificChart",
+                  "value": "GroupedBar"
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Updating operations",
+                  "PartSubTitle": "by type, over time"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "10": {
+            "position": {
+              "x": 12,
+              "y": 10,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity  \n| where OfficeWorkload == 'AzureActiveDirectory' \n| where Operation contains 'delete' \n| summarize count() by Operation, bin_at(TimeGenerated, 1h, now())  \n"
                 },
                 {
                   "name": "TimeRange",
                   "value": "P1D"
                 },
                 {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [
+                      {
+                        "name": "Operation",
+                        "type": "String"
+                      }
+                    ],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "4a895dc8-34f0-4c73-b5bc-f9eed7449253"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": ""
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsChart"
+                },
+                {
                   "name": "SpecificChart",
-                  "isOptional": true
+                  "value": "GroupedBar"
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Cylance Threat Count by Feature ",
-                  "PartSubTitle": "{Workspace_Name}",
-                  "Query": "//Detected By\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend DetectionMethod= extract('Detected By: (.*?),',1,SyslogMessage)\n| summarize Count=count() by DetectionMethod\n"
+                  "PartTitle": "Deleting operations ",
+                  "PartSubTitle": "by type, over time"
                 }
               },
               "asset": {
@@ -676,9 +806,9 @@
           },
           "11": {
             "position": {
-              "x": 6,
-              "y": 11,
-              "colSpan": 6,
+              "x": 19,
+              "y": 10,
+              "colSpan": 7,
               "rowSpan": 4
             },
             "metadata": {
@@ -688,13 +818,33 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//Count by status\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend CylanceStatus= extract('Status: (.*?),',1,SyslogMessage)\n| summarize count() by CylanceStatus \n"
+                  "value": "//Activity by User type \nOfficeActivity \n| where OfficeWorkload == 'AzureActiveDirectory' \n| summarize count() by UserType\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "UserType",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
                 },
                 {
                   "name": "Version",
@@ -702,11 +852,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "636dd1a9-1304-4da0-9a4b-fdd8d734bfda"
+                  "value": "905469fc-2a41-4637-ba34-84feb358bca7"
                 },
                 {
                   "name": "PartTitle",
@@ -714,7 +864,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -722,15 +872,7 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
@@ -740,9 +882,8 @@
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Clyance Threat Status Summary",
-                  "PartSubTitle": "{Workspace_Name}",
-                  "Query": "//Count by status\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend CylanceStatus= extract('Status: (.*?),',1,SyslogMessage)\n| summarize StatusCount=count() by CylanceStatus \n"
+                  "PartTitle": "Activity by user type",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -753,94 +894,47 @@
           },
           "12": {
             "position": {
-              "x": 12,
-              "y": 11,
-              "colSpan": 6,
-              "rowSpan": 4
+              "x": 0,
+              "y": 14,
+              "colSpan": 18,
+              "rowSpan": 1
             },
             "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//threat type make pie chart \nSyslog \n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage )  \n| where LogType =~'Threat' \n| extend EventName = extract('Event Name: (.*?),',1,SyslogMessage )  \n| summarize EventType= count() by EventName \n"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "EventName",
-                      "type": "String"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "EventType",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "ab497652-b6c8-46c9-be16-fd656372373c"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsDonut"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Threat Event Summary",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "settings": {
+                    "content": "<div style='font-size:300%;'>Users - Groups</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
                 }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
               }
             }
           },
           "13": {
+            "position": {
+              "x": 19,
+              "y": 14,
+              "colSpan": 7,
+              "rowSpan": 1
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style='font-size:300%;'>User Logons</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "14": {
             "position": {
               "x": 0,
               "y": 15,
@@ -854,89 +948,33 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//top 5 device in threat\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend DeviceName = extract('Device Name: (.*?),',1,SyslogMessage)\n| where DeviceName != ''\n| summarize DeviceCount=count() by DeviceName\n| top 5 by DeviceCount desc \n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "fe52d69e-369f-4ec0-9210-1860baa3c55a"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
+                  "value": "OfficeActivity  \n| where OfficeWorkload == 'AzureActiveDirectory' \n| where Operation contains 'user' \n| summarize count() by Operation \n"
                 },
                 {
                   "name": "TimeRange",
                   "value": "P1D"
                 },
                 {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Top 5 Devices With Threats By Count",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "14": {
-            "position": {
-              "x": 6,
-              "y": 15,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
+                  "name": "Dimensions",
                   "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "xAxis": {
+                      "name": "Operation",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
                   }
-                },
-                {
-                  "name": "Query",
-                  "value": "//unsafe count by device\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend CylanceStatus= extract('Status: (.*?),',1,SyslogMessage)\n| where CylanceStatus =~'Unsafe'\n| extend DeviceName = extract('Device Name: (.*?),',1,SyslogMessage)\n| summarize count() by DeviceName \n| top 5 by count_ desc nulls last \n"
                 },
                 {
                   "name": "Version",
@@ -944,11 +982,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "55fb4a5b-a9ce-4d64-9db4-1e113859f4ff"
+                  "value": "77d6ebe2-5afc-4f1a-9592-d7bca00a63e7"
                 },
                 {
                   "name": "PartTitle",
@@ -956,7 +994,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -964,15 +1002,7 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
@@ -982,9 +1012,9 @@
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Top 5 Devices With Unsafe Threats By Count",
-                  "PartSubTitle": "{Workspace_Name}",
-                  "Query": "//unsafe count by device\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Threat'\n| extend CylanceStatus= extract('Status: (.*?),',1,SyslogMessage)\n| where CylanceStatus =~'Unsafe'\n| extend DeviceName = extract('Device Name: (.*?),',1,SyslogMessage)\n| summarize StatusCount=count() by DeviceName \n| top 5 by StatusCount nulls last \n"
+                  "PartTitle": "User operations",
+                  "PartSubTitle": "By type",
+                  "Query": "OfficeActivity \n| where OfficeWorkload == 'AzureActiveDirectory'\n| where Operation contains 'user' and Operation != 'UserLoggedIn'\n| summarize count() by Operation\n"
                 }
               },
               "asset": {
@@ -995,6 +1025,81 @@
           },
           "15": {
             "position": {
+              "x": 6,
+              "y": 15,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| where Operation contains 'user' and Operation != 'UserLoggedIn'\n| top 10 by TimeGenerated desc\n| project Operation, UserId , ResultStatus\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "879f26ca-215c-4624-b50e-ac49916c4b8a"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": ""
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "User operation events",
+                  "PartSubTitle": "Last 10"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "16": {
+            "position": {
               "x": 12,
               "y": 15,
               "colSpan": 6,
@@ -1007,24 +1112,102 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//malware type pie chart \nSyslog \n| where Computer =~ 'sysloghost'  \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage )  \n| where LogType =~'Threat' \n| extend FileType= extract('File Type: (.*?),',1,SyslogMessage) \n| summarize FileTypeCount=count() by  FileType \n"
+                  "value": "OfficeActivity \n| where OfficeWorkload == 'AzureActiveDirectory'\n| where Operation == 'Add user.'\n| project TimeGenerated, User_Name=todynamic(AADTarget)[0].ID\n| summarize by tostring(User_Name), TimeGenerated\n| limit 10\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "bc8f871e-fa66-4fb3-8eb4-b94096c200c6"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": ""
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "New users",
+                  "PartSubTitle": "User name, Time - last 10"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "17": {
+            "position": {
+              "x": 19,
+              "y": 15,
+              "colSpan": 7,
+              "rowSpan": 3
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| where Operation == 'UserLoggedIn'\n| summarize Logons = count() by ResultStatus, bin_at(TimeGenerated, 1h, now())"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "FileType",
-                      "type": "String"
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
                     },
                     "yAxis": [
                       {
-                        "name": "FileTypeCount",
+                        "name": "Logons",
                         "type": "Int64"
                       }
                     ],
@@ -1038,11 +1221,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "4ec2c57b-16a4-4632-846f-e83c33c10e6f"
+                  "value": "fc6b0018-e776-429e-91dc-2cff0721eab9"
                 },
                 {
                   "name": "PartTitle",
@@ -1050,7 +1233,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -1058,120 +1241,18 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsDonut"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "AnalyticsChart"
                 },
                 {
                   "name": "SpecificChart",
-                  "isOptional": true
+                  "value": "Line"
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "File Type Associated With Threat By Count",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "16": {
-            "position": {
-              "x": 0,
-              "y": 19,
-              "colSpan": 18,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<div style='font-size:300%;'>Cylance Mangement</div> \n",
-                    "title": "",
-                    "subtitle": ""
-                  }
-                }
-              }
-            }
-          },
-          "17": {
-            "position": {
-              "x": 0,
-              "y": 20,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//Audit logs type\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'AuditLog'\n| extend EventName = extract('Event Name: (.*?),',1,SyslogMessage ) \n| summarize EventType= count() by EventName\n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "3a902863-3cfc-41af-9832-bc18926c22bd"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Audit Event Summary",
-                  "PartSubTitle": "{Workspace_Name}",
-                  "Query": "//Audit logs type\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'AuditLog'\n| extend EventName = extract('Event Name: (.*?),',1,SyslogMessage ) \n| summarize EventCount= count() by EventName\n"
+                  "PartTitle": "User logons",
+                  "PartSubTitle": "Fail VS Success"
                 }
               },
               "asset": {
@@ -1182,84 +1263,29 @@
           },
           "18": {
             "position": {
-              "x": 6,
-              "y": 20,
-              "colSpan": 6,
-              "rowSpan": 4
+              "x": 19,
+              "y": 18,
+              "colSpan": 7,
+              "rowSpan": 1
             },
             "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//Agent Version Across \nSyslog \n| where Computer =~ 'sysloghost'  \n| extend AgentVersion= extract('Agent Version: (.*?),',1,SyslogMessage) \n| where AgentVersion !='' \n| extend DeviceName = extract('Device Name: (.*?),',1,SyslogMessage) \n| summarize DeviceCount=dcount(DeviceName) by AgentVersion  \n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "591a1ebd-822d-4188-a3f8-63fe9d376c77"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Agent Version Summary",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "settings": {
+                    "content": "<div style='font-size:300%;'>Failed Operations</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
                 }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
               }
             }
           },
           "19": {
             "position": {
-              "x": 12,
-              "y": 20,
+              "x": 0,
+              "y": 19,
               "colSpan": 6,
               "rowSpan": 4
             },
@@ -1270,13 +1296,33 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//device logs\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Device'\n| extend EventName = extract('Event Name: (.*?),',1,SyslogMessage ) \n| summarize EventType= count() by EventName\n"
+                  "value": "OfficeActivity  \n| where OfficeWorkload == 'AzureActiveDirectory' \n| where Operation contains 'group' \n| summarize count() by Operation"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "Operation",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
                 },
                 {
                   "name": "Version",
@@ -1284,11 +1330,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/CylanceDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "1dc8e02e-d322-45fd-800e-07c9f889d64b"
+                  "value": "17896e4c-0872-41d4-bbad-f8bc61fb9cb1"
                 },
                 {
                   "name": "PartTitle",
@@ -1296,7 +1342,7 @@
                 },
                 {
                   "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
+                  "value": ""
                 },
                 {
                   "name": "resourceTypeMode",
@@ -1304,15 +1350,7 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
@@ -1322,9 +1360,8 @@
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Device Event Summary",
-                  "PartSubTitle": "{Workspace_Name}",
-                  "Query": "//device logs\nSyslog\n| where Computer =~ 'sysloghost' \n| extend LogType= extract('^([a-xA-Z]*),',1,SyslogMessage ) \n| where LogType =~'Device'\n| extend EventName = extract('Event Name: (.*?),',1,SyslogMessage ) \n| summarize EventCount= count() by EventName\n"
+                  "PartTitle": "Group operations",
+                  "PartSubTitle": "By type"
                 }
               },
               "asset": {
@@ -1334,6 +1371,249 @@
             }
           },
           "20": {
+            "position": {
+              "x": 6,
+              "y": 19,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| where Operation contains 'group'\n| top 10 by TimeGenerated desc\n| project Operation, UserId , ResultStatus\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "82bb1da4-fc89-4c3f-b356-05315803f703"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": ""
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Group operation events",
+                  "PartSubTitle": "Last 10"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "21": {
+            "position": {
+              "x": 12,
+              "y": 19,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity \n| where OfficeWorkload == 'AzureActiveDirectory'\n| where Operation == 'Add group.'\n| project Group_Name=todynamic(AADTarget)[0].ID, TimeGenerated\n| sort by TimeGenerated\n| limit 10"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "5b5d670e-188c-40e1-aa17-bbbea21e86e6"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": ""
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "New groups",
+                  "PartSubTitle": "Group name, Time - last 10"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "22": {
+            "position": {
+              "x": 19,
+              "y": 19,
+              "colSpan": 7,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//Failed operations by operation\nOfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| where ResultStatus == 'Failure'\n| summarize count() by Operation, bin_at(TimeGenerated, 1h, now())\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [
+                      {
+                        "name": "Operation",
+                        "type": "String"
+                      }
+                    ],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/AzureActiveDirectoryDashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "db0b2916-3d18-46eb-8f8b-a9a2139c46e7"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": ""
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsChart"
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Bar"
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Failed operations by type",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "23": {
             "position": {
               "x": 0,
               "y": 0,
@@ -1353,6 +1633,10 @@
                 {
                   "name": "workspaceName",
                   "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "menuItemToOpen",
+                  "value": "Addons"
                 }
               ],
               "type": "Extension/Microsoft_Azure_Security_Insights/PartType/AsiOverviewPart",

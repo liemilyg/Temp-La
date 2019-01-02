@@ -1,10 +1,10 @@
-{
-  "name": "JuniperDashboard_{Workspace_Name}",
+{ 
+  "name": "Office365Dashboard_{Workspace_Name}",
   "type": "Microsoft.Portal/dashboards",
   "location": "{Dashboard_Location}",
   "tags": {
-    "addonKey": "JuniperDashboard",
-    "hidden-title": "Juniper - {Workspace_Name}",
+    "addonKey": "Office365Dashboard",
+    "hidden-title": "Office 365 - {Workspace_Name}",
     "version": "1.0",
     "workspaceName": "{Workspace_Name}"
   },
@@ -17,7 +17,7 @@
             "position": {
               "x": 1,
               "y": 0,
-              "colSpan": 15,
+              "colSpan": 23,
               "rowSpan": 1
             },
             "metadata": {
@@ -26,7 +26,7 @@
               "settings": {
                 "content": {
                   "settings": {
-                    "content": "<div style='font-size:300%;'>Juniper Overview</div> ",
+                    "content": "<div style='font-size:300%;'>General Overview</div>",
                     "title": "",
                     "subtitle": ""
                   }
@@ -35,27 +35,6 @@
             }
           },
           "1": {
-            "position": {
-              "x": 16,
-              "y": 0,
-              "colSpan": 8,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<img width='350' height='50' src='https://img1-327a.kxcdn.com/DataImage.ashx/8015773'/>\n\n",
-                    "title": "",
-                    "subtitle": "My subtitle"
-                  }
-                }
-              }
-            }
-          },
-          "2": {
             "position": {
               "x": 0,
               "y": 1,
@@ -69,13 +48,16 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//total volume\nSyslog\n| where HostName contains 'juniper'\n| summarize LogVolume=count() by TimeGenerated\n"
+                  "value": "OfficeActivity\n| summarize count() by OfficeWorkload, bin_at(TimeGenerated, 1h, now())"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
@@ -86,7 +68,100 @@
                     },
                     "yAxis": [
                       {
-                        "name": "LogVolume",
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [
+                      {
+                        "name": "OfficeWorkload",
+                        "type": "String"
+                      }
+                    ],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "6e328156-5f22-4e7e-ab06-67f382df5883"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsChart"
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Area"
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Office activity by workload",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "2": {
+            "position": {
+              "x": 12,
+              "y": 1,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity \n| summarize count() by OfficeWorkload\n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "OfficeWorkload",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
                         "type": "Int64"
                       }
                     ],
@@ -100,11 +175,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "dceac968-24a9-4510-947d-09d8bb14db97"
+                  "value": "7391e81f-0aec-4eb5-8234-a9a52e56fb9e"
                 },
                 {
                   "name": "PartTitle",
@@ -120,22 +195,18 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsChart"
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
-                  "value": "Line"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "isOptional": true
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Event Count Time Trend",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Activity by workload",
+                  "PartSubTitle": "- "
                 }
               },
               "asset": {
@@ -146,9 +217,9 @@
           },
           "3": {
             "position": {
-              "x": 12,
+              "x": 18,
               "y": 1,
-              "colSpan": 12,
+              "colSpan": 6,
               "rowSpan": 4
             },
             "metadata": {
@@ -158,33 +229,31 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//process trend\nSyslog\n| where HostName contains 'juniper' \n| summarize ProcessCount=count() by ProcessName, TimeGenerated\n"
+                  "value": "OfficeActivity \n| where ItemType != '' \n| summarize count() by ItemType\n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
+                      "name": "ItemType",
+                      "type": "String"
                     },
                     "yAxis": [
                       {
-                        "name": "ProcessCount",
+                        "name": "count_",
                         "type": "Int64"
                       }
                     ],
-                    "splitBy": [
-                      {
-                        "name": "ProcessName",
-                        "type": "String"
-                      }
-                    ],
+                    "splitBy": [],
                     "aggregation": "Sum"
                   }
                 },
@@ -194,11 +263,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "d8932f94-809b-470c-99ce-cb7c15d8f326"
+                  "value": "950d0e7b-c84b-4b6a-ae41-bb5ffc3bd1bd"
                 },
                 {
                   "name": "PartTitle",
@@ -214,22 +283,18 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsChart"
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
-                  "value": "Line"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "isOptional": true
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Process Count Time Trend",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Activity by type",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -252,33 +317,31 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//type trend over all\nSyslog\n| where HostName contains 'juniper'\n| extend SessionType= extract('^(.*?):',1,SyslogMessage)\n| where SessionType  !=''\n| summarize SessionTypeCount=count() by SessionType, TimeGenerated\n"
+                  "value": "OfficeActivity \n| summarize count() by UserType\n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "TimeGenerated",
-                      "type": "DateTime"
+                      "name": "UserType",
+                      "type": "String"
                     },
                     "yAxis": [
                       {
-                        "name": "SessionTypeCount",
+                        "name": "count_",
                         "type": "Int64"
                       }
                     ],
-                    "splitBy": [
-                      {
-                        "name": "SessionType",
-                        "type": "String"
-                      }
-                    ],
+                    "splitBy": [],
                     "aggregation": "Sum"
                   }
                 },
@@ -288,11 +351,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "b55a4e4b-c4ab-4185-b530-0eeab34d0a80"
+                  "value": "73a9103c-ed9b-4d0a-8f7f-d86d145bea80"
                 },
                 {
                   "name": "PartTitle",
@@ -308,22 +371,18 @@
                 },
                 {
                   "name": "ControlType",
-                  "value": "AnalyticsChart"
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
-                  "value": "Bar"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "isOptional": true
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Session Type Count Time Trend",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Activity by user type",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -346,24 +405,27 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "Syslog\n| where HostName contains 'juniper'\n| where ProcessName =~ 'RT_FLOW'\n| extend SessionType= extract('^(.*?):',1,SyslogMessage)\n| where SessionType  !=''\n| summarize SessionTypeCount=count() by SessionType\n"
+                  "value": "//Admin operations ordered by amount \nOfficeActivity \n| where UserType == 'Admin' \n| summarize count() by Operation \n| order by count_  \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "SessionType",
+                      "name": "Operation",
                       "type": "String"
                     },
                     "yAxis": [
                       {
-                        "name": "SessionTypeCount",
+                        "name": "count_",
                         "type": "Int64"
                       }
                     ],
@@ -377,11 +439,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "b5292d65-2de8-4e6d-806f-5adbe66ab675"
+                  "value": "b63340f2-53e1-46f9-8aa2-d9fa96ac31bf"
                 },
                 {
                   "name": "PartTitle",
@@ -400,10 +462,6 @@
                   "value": "AnalyticsDonut"
                 },
                 {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
                   "name": "SpecificChart",
                   "isOptional": true
                 }
@@ -411,8 +469,8 @@
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "RT Flow Session Type Summary By Count",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Admin operations by type",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -425,7 +483,7 @@
             "position": {
               "x": 12,
               "y": 5,
-              "colSpan": 6,
+              "colSpan": 12,
               "rowSpan": 4
             },
             "metadata": {
@@ -435,100 +493,39 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//Session Close Reason Summary\nSyslog\n| where HostName contains 'juniper'\n| extend Reason= extract('.*?: session closed (.*?):',1,SyslogMessage)\n| where Reason  !=''\n| summarize ReasonCount= count() by Reason\n| top 5 by ReasonCount desc\n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "c950c54a-45eb-4325-aefd-1996a8878f7f"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
+                  "value": "OfficeActivity\n| summarize Update = countif(Operation contains 'update'), Create = countif(Operation contains 'create'), Delete = countif(Operation contains 'delete'), Add = countif(Operation contains 'add') by bin_at(TimeGenerated, 1d, now())"
                 },
                 {
                   "name": "TimeRange",
                   "value": "P1D"
                 },
                 {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Session Close Reason Summary By Count",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "7": {
-            "position": {
-              "x": 18,
-              "y": 5,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//process count\nSyslog\n| where HostName contains 'juniper'\n| summarize ProcessCount=count() by ProcessName\n| sort by ProcessCount desc nulls last\n"
-                },
-                {
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "ProcessName",
-                      "type": "String"
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
                     },
                     "yAxis": [
                       {
-                        "name": "ProcessCount",
+                        "name": "Update",
+                        "type": "Int64"
+                      },
+                      {
+                        "name": "Create",
+                        "type": "Int64"
+                      },
+                      {
+                        "name": "Delete",
+                        "type": "Int64"
+                      },
+                      {
+                        "name": "Add",
                         "type": "Int64"
                       }
                     ],
@@ -542,11 +539,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "bbe48eb0-62c6-4f85-a82f-c69cb27da6fe"
+                  "value": "2bc078e1-3fe8-489c-b807-b5562a7a84e3"
                 },
                 {
                   "name": "PartTitle",
@@ -566,18 +563,14 @@
                 },
                 {
                   "name": "SpecificChart",
-                  "value": "Bar"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
+                  "value": "Line"
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Process Summary By Count",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Update VS Create VS Add VS Delete",
+                  "PartSubTitle": "Over the last week"
                 }
               },
               "asset": {
@@ -586,31 +579,10 @@
               }
             }
           },
-          "8": {
+          "7": {
             "position": {
               "x": 0,
               "y": 9,
-              "colSpan": 24,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<div style='font-size:300%;'>Top 5 IP Adresses Inbound And Outbound</div> ",
-                    "title": "",
-                    "subtitle": ""
-                  }
-                }
-              }
-            }
-          },
-          "9": {
-            "position": {
-              "x": 0,
-              "y": 10,
               "colSpan": 6,
               "rowSpan": 4
             },
@@ -621,537 +593,12 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "//Top 5 Outbound Source IP Addresses\nSyslog\n| where HostName contains 'juniper'\n| where SyslogMessage contains 'default-permit trust untrust'\n| extend SourceIP=extract('([0-9.].*?)/[0-9].*?->',1,SyslogMessage)\n| summarize SourceIPCount=count() by SourceIP\n| top 5 by SourceIPCount desc nulls last\n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "4aba904b-9824-43d5-93a9-b3a29671086d"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Top 5 Outbound Source IP Addresses",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "10": {
-            "position": {
-              "x": 6,
-              "y": 10,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//Top 5 Outbound Destination IP Addresses\nSyslog\n| where HostName contains 'juniper'\n| where SyslogMessage contains 'default-permit trust untrust'\n| extend DestinationIP=extract('->([0-9.].*?)/[0-9].*?',1,SyslogMessage)\n| summarize DestinationIPCount=count() by DestinationIP\n| top 5 by DestinationIPCount desc nulls last\n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "c053c125-0083-4ec9-b9ab-da234b663ec1"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Top 5 Outbound Destination IP Addresses",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "11": {
-            "position": {
-              "x": 12,
-              "y": 10,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//Top 5 Inbound Source IP Addresses\nSyslog\n| where HostName contains 'juniper'\n| where SyslogMessage contains 'server-access untrust trust'\n| extend SourceIP=extract('([0-9.].*?)/[0-9].*?->',1,SyslogMessage)\n| summarize SourceIPCount=count() by SourceIP\n| top 5 by SourceIPCount desc nulls last\n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "ef0bec93-5b9a-41fb-9fdb-e2f01ba3ba77"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Top 5 Inbound Source IP Addresses",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "12": {
-            "position": {
-              "x": 18,
-              "y": 10,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//Top 5 Inbound Destination IP Addresses\nSyslog\n| where HostName contains 'juniper'\n| where SyslogMessage contains 'server-access untrust trust'\n| extend DestinationIP=extract('->([0-9.].*?)/[0-9].*?',1,SyslogMessage)\n| summarize DestinationIPCount=count() by DestinationIP\n| top 5 by DestinationIPCount desc nulls last\n"
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "489faf13-e6fe-4a98-bfea-22ad09d393c6"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsGrid"
-                },
-                {
-                  "name": "Dimensions",
-                  "isOptional": true
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Top 5 Inbound Destination IP Addresses",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "13": {
-            "position": {
-              "x": 0,
-              "y": 14,
-              "colSpan": 12,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<div style='font-size:300%;'>Top 5 Ports</div> \n",
-                    "title": "",
-                    "subtitle": ""
-                  }
-                }
-              }
-            }
-          },
-          "14": {
-            "position": {
-              "x": 0,
-              "y": 15,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "// top source port\nSyslog\n| where HostName contains 'juniper'\n| extend DestinationPort=extract('[0-9.].*?/([0-9].*?)->',1,SyslogMessage)\n| summarize DestinationPortCount=count() by DestinationPort\n| top 5 by DestinationPortCount desc nulls last\n"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "DestinationPort",
-                      "type": "String"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "DestinationPortCount",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "f43f11ce-45ec-4e31-9287-1bbc62323ccf"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsDonut"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Top 5 Source Ports",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "15": {
-            "position": {
-              "x": 6,
-              "y": 15,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//top destination port\nSyslog\n| where HostName contains 'juniper'\n| extend DestinationPort=extract('->[0-9.].*?/([0-9].*?) ',1,SyslogMessage)\n| summarize DestinationPortCount=count() by DestinationPort\n| top 5 by DestinationPortCount desc nulls last\n"
-                },
-                {
-                  "name": "Dimensions",
-                  "value": {
-                    "xAxis": {
-                      "name": "DestinationPort",
-                      "type": "String"
-                    },
-                    "yAxis": [
-                      {
-                        "name": "DestinationPortCount",
-                        "type": "Int64"
-                      }
-                    ],
-                    "splitBy": [],
-                    "aggregation": "Sum"
-                  }
-                },
-                {
-                  "name": "Version",
-                  "value": "1.0"
-                },
-                {
-                  "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
-                },
-                {
-                  "name": "PartId",
-                  "value": "e4156e69-2680-442e-a481-ebe8c44acf09"
-                },
-                {
-                  "name": "PartTitle",
-                  "value": "Analytics"
-                },
-                {
-                  "name": "PartSubTitle",
-                  "value": "{Workspace_Name}"
-                },
-                {
-                  "name": "resourceTypeMode",
-                  "value": "workspace"
-                },
-                {
-                  "name": "ControlType",
-                  "value": "AnalyticsDonut"
-                },
-                {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
-                  "name": "SpecificChart",
-                  "isOptional": true
-                }
-              ],
-              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
-              "settings": {
-                "content": {
-                  "PartTitle": "Top 5 Destination Ports",
-                  "PartSubTitle": "{Workspace_Name}"
-                }
-              },
-              "asset": {
-                "idInputName": "ComponentId",
-                "type": "ApplicationInsights"
-              }
-            }
-          },
-          "16": {
-            "position": {
-              "x": 0,
-              "y": 19,
-              "colSpan": 18,
-              "rowSpan": 1
-            },
-            "metadata": {
-              "inputs": [],
-              "type": "Extension/HubsExtension/PartType/MarkdownPart",
-              "settings": {
-                "content": {
-                  "settings": {
-                    "content": "<div style='font-size:300%;'>Firewall Management</div> ",
-                    "title": "",
-                    "subtitle": ""
-                  }
-                }
-              }
-            }
-          },
-          "17": {
-            "position": {
-              "x": 0,
-              "y": 20,
-              "colSpan": 6,
-              "rowSpan": 4
-            },
-            "metadata": {
-              "inputs": [
-                {
-                  "name": "ComponentId",
-                  "value": {
-                    "SubscriptionId": "{Subscription_Id}",
-                    "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
-                  }
-                },
-                {
-                  "name": "Query",
-                  "value": "//Type count trend mgd\nSyslog\n| where HostName contains 'juniper'\n| where ProcessName =~ 'mgd'\n| extend SessionType= extract('^(.*?):',1,SyslogMessage)\n| where SessionType  !=''\n| summarize SessionTypeCount=count() by SessionType, TimeGenerated\n"
+                  "value": "OfficeActivity \n| where TimeGenerated >= ago(14d) \n| where Operation contains 'group' \n| summarize count() by bin(TimeGenerated, 1d) \n| extend Week = iff(TimeGenerated>ago(7d), 'This Week', 'Last Week'), TimeGenerated = iff(TimeGenerated>ago(7d), TimeGenerated, TimeGenerated + 7d)\n"
                 },
                 {
                   "name": "Dimensions",
@@ -1162,13 +609,13 @@
                     },
                     "yAxis": [
                       {
-                        "name": "SessionTypeCount",
+                        "name": "count_",
                         "type": "Int64"
                       }
                     ],
                     "splitBy": [
                       {
-                        "name": "SessionType",
+                        "name": "Week",
                         "type": "String"
                       }
                     ],
@@ -1181,11 +628,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "25bbcdf7-b1ce-48ac-864c-682f6604659d"
+                  "value": "e5966484-1d9f-459d-9791-6584a0bf8266"
                 },
                 {
                   "name": "PartTitle",
@@ -1209,14 +656,14 @@
                 },
                 {
                   "name": "TimeRange",
-                  "value": "P1D"
+                  "isOptional": true
                 }
               ],
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Device Config Change Count Time Trend",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Group operations",
+                  "PartSubTitle": "Week Over Week"
                 }
               },
               "asset": {
@@ -1225,10 +672,10 @@
               }
             }
           },
-          "18": {
+          "8": {
             "position": {
               "x": 6,
-              "y": 20,
+              "y": 9,
               "colSpan": 6,
               "rowSpan": 4
             },
@@ -1239,13 +686,34 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "Syslog\n| where HostName contains 'juniper' \n| extend SessionType= extract('^(.*?):',1,SyslogMessage) \n| where SessionType  !contains 'RT_FLOW'\n| where SessionType !=''\n| summarize SessionTypeCount=count() by SessionType \n"
+                  "value": "OfficeActivity \n| where TimeGenerated >= ago(14d) \n| where Operation contains 'user' \n| summarize count() by bin(TimeGenerated, 1d) \n| extend Week = iff(TimeGenerated>ago(7d), 'This Week', 'Last Week'), TimeGenerated = iff(TimeGenerated>ago(7d), TimeGenerated, TimeGenerated + 7d) \n"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [
+                      {
+                        "name": "Week",
+                        "type": "String"
+                      }
+                    ],
+                    "aggregation": "Sum"
+                  }
                 },
                 {
                   "name": "Version",
@@ -1253,11 +721,283 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "5b30ee47-7f5e-40b0-be6b-0e21ea355b35"
+                  "value": "521a979d-0657-4bf0-96d9-7bea98ba9355"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsChart"
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Line"
+                },
+                {
+                  "name": "TimeRange",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "User operations",
+                  "PartSubTitle": "Week Over Week"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "9": {
+            "position": {
+              "x": 12,
+              "y": 9,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity \n| where Operation contains 'Folder' \n| summarize count() by Operation\n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "Operation",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "e0a5001c-2a6a-40ce-a3f9-364e5aa58911"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Folder changes ",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "10": {
+            "position": {
+              "x": 18,
+              "y": 9,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity \n| where Operation contains 'File' \n| summarize count() by Operation\n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "Operation",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "de0d201a-b466-4657-922d-c5436372eae8"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "File changes",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "11": {
+            "position": {
+              "x": 0,
+              "y": 13,
+              "colSpan": 24,
+              "rowSpan": 1
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style='font-size:300%;'>SharePoint & OneDrive</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "12": {
+            "position": {
+              "x": 0,
+              "y": 14,
+              "colSpan": 6,
+              "rowSpan": 6
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//Top sharepoint client IPS\nOfficeActivity\n| where OfficeWorkload in ('OneDrive', 'SharePoint')\n| summarize Amount = count() by Operation\n| top 10 by Amount\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "0ffd9092-1c3a-4593-b91d-565a7f6eb3c6"
                 },
                 {
                   "name": "PartTitle",
@@ -1280,10 +1020,6 @@
                   "isOptional": true
                 },
                 {
-                  "name": "TimeRange",
-                  "value": "P1D"
-                },
-                {
                   "name": "SpecificChart",
                   "isOptional": true
                 }
@@ -1291,8 +1027,8 @@
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Non Flow Session Summary  By Count",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Top 10 operations",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -1301,12 +1037,12 @@
               }
             }
           },
-          "19": {
+          "13": {
             "position": {
-              "x": 12,
-              "y": 20,
+              "x": 6,
+              "y": 14,
               "colSpan": 6,
-              "rowSpan": 4
+              "rowSpan": 6
             },
             "metadata": {
               "inputs": [
@@ -1315,24 +1051,27 @@
                   "value": {
                     "SubscriptionId": "{Subscription_Id}",
                     "ResourceGroup": "{Resource_Group}",
-                    "Name": "{Workspace_Name}",
-                    "ResourceId": "/subscriptions/{Subscription_Id}/resourcegroups/{Resource_Group}/providers/microsoft.operationalInsights/workspaces/{Workspace_Name}"
+                    "Name": "{Workspace_Name}"
                   }
                 },
                 {
                   "name": "Query",
-                  "value": "// user access for management\nSyslog\n| where HostName contains 'juniper'\n| where ProcessName =~ 'mgd'\n| extend UserName=extract('User '(.*?)'',1,SyslogMessage)\n| summarize UserCount=count() by UserName\n| top 5 by UserCount desc nulls last\n"
+                  "value": "//Files Downloaded by type\nOfficeActivity\n| where OfficeWorkload in ('OneDrive', 'SharePoint')\n| where Operation == 'FileDownloaded'\n| summarize count() by SourceFileExtension\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
                 },
                 {
                   "name": "Dimensions",
                   "value": {
                     "xAxis": {
-                      "name": "UserName",
+                      "name": "SourceFileExtension",
                       "type": "String"
                     },
                     "yAxis": [
                       {
-                        "name": "UserCount",
+                        "name": "count_",
                         "type": "Int64"
                       }
                     ],
@@ -1346,11 +1085,11 @@
                 },
                 {
                   "name": "DashboardId",
-                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/JuniperDashboard_{Workspace_Name}"
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
                 },
                 {
                   "name": "PartId",
-                  "value": "62c2bafb-ee6e-4a4b-a57c-f50d2e8724d2"
+                  "value": "0390c5a7-2edb-4c69-803b-b983b931ebf9"
                 },
                 {
                   "name": "PartTitle",
@@ -1369,8 +1108,92 @@
                   "value": "AnalyticsDonut"
                 },
                 {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Files downloaded by extension",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "14": {
+            "position": {
+              "x": 12,
+              "y": 14,
+              "colSpan": 6,
+              "rowSpan": 6
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//Files Uploaded by type \nOfficeActivity \n| where OfficeWorkload in ('OneDrive', 'SharePoint') \n| where Operation == 'FileUploaded' \n| summarize count() by SourceFileExtension\n | sort by count_"
+                },
+                {
                   "name": "TimeRange",
                   "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "SourceFileExtension",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "db2abfb5-40a7-4cef-8e3c-e2e78bd768a3"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
                 },
                 {
                   "name": "SpecificChart",
@@ -1380,8 +1203,368 @@
               "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
               "settings": {
                 "content": {
-                  "PartTitle": "Top 5 Firewall Login By Attempts",
-                  "PartSubTitle": "{Workspace_Name}"
+                  "PartTitle": "Files uploaded by extension",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "15": {
+            "position": {
+              "x": 18,
+              "y": 14,
+              "colSpan": 6,
+              "rowSpan": 6
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//Top sharepoint sites \nOfficeActivity \n| where OfficeWorkload in ('OneDrive', 'SharePoint') and Site_Url != '' \n| summarize Amount = count() by Site_Url \n| top 10 by Amount \n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "7d976990-dd59-462b-a148-f32509965531"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid"
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Top 10 sites",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "16": {
+            "position": {
+              "x": 0,
+              "y": 20,
+              "colSpan": 24,
+              "rowSpan": 1
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style='font-size:300%;'>Exchange</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "17": {
+            "position": {
+              "x": 0,
+              "y": 21,
+              "colSpan": 12,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//Mailbox Logins by hour\nOfficeActivity\n| where OfficeWorkload == 'Exchange' and Operation == 'MailboxLogin'\n| summarize Logins = count() by bin_at(TimeGenerated, 1h, now())\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "Logins",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "826595b0-3c03-4415-ab47-5586fbbff615"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsChart"
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Line"
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Mailbox logins by hour",
+                  "PartSubTitle": " "
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "18": {
+            "position": {
+              "x": 12,
+              "y": 21,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//Exchange operations that are performed by actors outside your organization - external\nOfficeActivity\n| where OfficeWorkload == 'Exchange'\n| where ExternalAccess == 'True' \n| summarize count() by Operation\n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "Operation",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "c63f44f6-7ad4-4658-8fd7-9794264354cb"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "External access operations by operation",
+                  "PartSubTitle": "(operations that are performed by actors outside your organization)"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "19": {
+            "position": {
+              "x": 18,
+              "y": 21,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity \n| where OfficeWorkload == 'Exchange' \n| summarize count() by UserType \n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "UserType",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "91a69395-1fcb-46b9-a763-b5a4d563bbb9"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Operations by user type",
+                  "PartSubTitle": " "
                 }
               },
               "asset": {
@@ -1391,6 +1574,299 @@
             }
           },
           "20": {
+            "position": {
+              "x": 0,
+              "y": 25,
+              "colSpan": 24,
+              "rowSpan": 1
+            },
+            "metadata": {
+              "inputs": [],
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "<div style='font-size:300%;'>Azure Active Directory</div>",
+                    "title": "",
+                    "subtitle": ""
+                  }
+                }
+              }
+            }
+          },
+          "21": {
+            "position": {
+              "x": 0,
+              "y": 26,
+              "colSpan": 12,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity\n| where OfficeWorkload == 'AzureActiveDirectory'\n| summarize additions = countif(Operation contains 'add'), updates = countif(Operation contains 'Update'), deletions = countif(Operation contains 'Delete') by bin_at(TimeGenerated, 1h, now())\n"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "TimeGenerated",
+                      "type": "DateTime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "additions",
+                        "type": "Int64"
+                      },
+                      {
+                        "name": "updates",
+                        "type": "Int64"
+                      },
+                      {
+                        "name": "deletions",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "c831a635-cc00-4ea4-beec-96bd6940023d"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsChart"
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Line"
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Additions VS Updates VS Deletions",
+                  "PartSubTitle": "Over the past week"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "22": {
+            "position": {
+              "x": 12,
+              "y": 26,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "//AzureActiveDirectory operations over time \nOfficeActivity  \n| where OfficeWorkload == 'AzureActiveDirectory' \n| where Operation contains 'group' \n| summarize count() by Operation \n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "Operation",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "6b7e4c9f-b9fc-4371-a713-eae3dc7c942b"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Group operations",
+                  "PartSubTitle": "Be type"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "23": {
+            "position": {
+              "x": 18,
+              "y": 26,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "ComponentId",
+                  "value": {
+                    "SubscriptionId": "{Subscription_Id}",
+                    "ResourceGroup": "{Resource_Group}",
+                    "Name": "{Workspace_Name}"
+                  }
+                },
+                {
+                  "name": "Query",
+                  "value": "OfficeActivity \n| where OfficeWorkload == 'AzureActiveDirectory'\n| where Operation contains 'user' and Operation != 'UserLoggedIn'\n| summarize count() by Operation\n | sort by count_"
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D"
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "Operation",
+                      "type": "String"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "count_",
+                        "type": "Int64"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                },
+                {
+                  "name": "Version",
+                  "value": "1.0"
+                },
+                {
+                  "name": "DashboardId",
+                  "value": "/subscriptions/{Subscription_Id}/resourceGroups/dashboards/providers/Microsoft.Portal/dashboards/Office365Dashboard_{Workspace_Name}"
+                },
+                {
+                  "name": "PartId",
+                  "value": "2ee03209-ce71-4500-8052-37244a3a6c06"
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics"
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "resourceTypeMode",
+                  "value": "workspace"
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsDonut"
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "User operations",
+                  "PartSubTitle": "By type"
+                }
+              },
+              "asset": {
+                "idInputName": "ComponentId",
+                "type": "ApplicationInsights"
+              }
+            }
+          },
+          "24": {
             "position": {
               "x": 0,
               "y": 0,
@@ -1410,6 +1886,10 @@
                 {
                   "name": "workspaceName",
                   "value": "{Workspace_Name}"
+                },
+                {
+                  "name": "menuItemToOpen",
+                  "value": "Addons"
                 }
               ],
               "type": "Extension/Microsoft_Azure_Security_Insights/PartType/AsiOverviewPart",
